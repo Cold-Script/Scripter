@@ -8,9 +8,9 @@ local Mines = Floor.Value == "Mines"
 local Retro = Floor.Value == "Retro"
 local Backdoor = Floor.Value == "Backdoor"
 if Fools then
-RemotesFolder = game:GetService("ReplicatedStorage").EntityInfo
+RemotesFolder = ReplicatedStorage.EntityInfo
 else
-RemotesFolder = game:GetService("ReplicatedStorage").RemotesFolder
+RemotesFolder = ReplicatedStorage.RemotesFolder
 end
 --// Script \\
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
@@ -93,3 +93,107 @@ Callback = function(v)
 _G.EnabledOnDeath = v
 end})
 end
+Tabs.Main:AddSection("Fast")
+game:GetService("RunService").RenderStepped:Connect(function()
+pcall(function()
+if _G.FastDoors then game.workspace.CurrentRooms[tostring(game:GetService("ReplicatedStorage").GameData.LatestRoom.Value)]:WaitForChild("Door"):SetAttribute("FastOpen", true)
+end 
+end)
+end)
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Fast Doors",
+Default = false,
+Callback = function(v)
+_G.FastDoors = v
+end})
+game:GetService("RunService").RenderStepped:Connect(function()
+pcall(function()
+if _G.FastDupe then game.workspace.CurrentRooms[tostring(game:GetService("ReplicatedStorage").GameData.LatestRoom.Value)]:WaitForChild("DoorFake"):SetAttribute("FastOpen", true)
+end 
+end)
+end)
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Fast Dupe",
+Default = false,
+Callback = function(v)
+_G.FastDupe = v
+end})
+Tabs.Main:AddSection("Reach")
+game:GetService("RunService").RenderStepped:Connect(function()
+pcall(function()
+if _G.DoorsReach then game.workspace.CurrentRooms[tostring(game:GetService("ReplicatedStorage").GameData.LatestRoom.Value)]:WaitForChild("Door").ClientOpen:FireServer()
+end 
+end)
+end)
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Doors Reach",
+Default = false,
+Callback = function(v)
+_G.DoorsReach = v
+end})
+game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
+    if not _G.IncreasedDistance then return end
+    if v.IsA(v,"ProximityPrompt") then
+       if _G.IncreasedDistance then
+           v.MaxActivationDistance *= _G.IncreasedDistance and 2 or 0.5
+       end
+    end
+end)
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Reach",
+Default = false,
+Callback = function(v)
+_G.IncreasedDistance = v
+for _,v in pairs(workspace:GetDescendants()) do
+  if v.IsA(v,"ProximityPrompt") then
+       if _G.IncreasedDistance then
+           v.MaxActivationDistance *= _G.IncreasedDistance and 2 or 0.5
+          end
+       end
+    end
+end})
+Tabs.Main:AddSection("Interact")
+game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
+    if not _G.ThroughInteract then return end
+    if v.IsA(v,"ProximityPrompt") then
+       if _G.ThroughInteract then
+           v.RequiresLineOfSight = _G.ThroughInteract and false or true
+       end
+    end
+end)
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Through Interact",
+Default = false,
+Callback = function(v)
+_G.ThroughInteract = v
+for _,v in pairs(workspace:GetDescendants()) do
+  if not _G.ThroughInteract then return end
+    if v.IsA(v,"ProximityPrompt") then
+       if _G.ThroughInteract then
+           v.RequiresLineOfSight = _G.ThroughInteract and false or true
+          end
+       end
+    end
+end})
+game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
+    if not _G.InstanceInteract then return end
+    if v.IsA(v,"ProximityPrompt") then
+       if _G.InstanceInteract then
+           v.HoldDuration = 0
+       end
+    end
+end)
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Instance Interact",
+Default = false,
+Callback = function(v)
+_G.InstanceInteract = v
+for _,v in pairs(workspace:GetDescendants()) do
+  if not _G.InstanceInteract then return end
+    if v.IsA(v,"ProximityPrompt") then
+       if _G.InstanceInteract then
+           v.HoldDuration = 0
+          end
+       end
+    end
+end})
