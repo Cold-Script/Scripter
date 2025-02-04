@@ -6,6 +6,7 @@ local Hotel = Floor.Value == "Hotel"
 local Rooms = Floor.Value == "Rooms"
 local Mines = Floor.Value == "Mines"
 local Retro = Floor.Value == "Retro"
+local Rooms = Floor.Value == "Rooms"
 local Backdoor = Floor.Value == "Backdoor"
 if Fools then
 RemotesFolder = ReplicatedStorage.EntityInfo
@@ -106,18 +107,6 @@ Default = false,
 Callback = function(v)
 _G.FastDoors = v
 end})
-game:GetService("RunService").RenderStepped:Connect(function()
-pcall(function()
-if _G.FastDupe then game.workspace.CurrentRooms[tostring(game:GetService("ReplicatedStorage").GameData.LatestRoom.Value)]:WaitForChild("SideroomDupe"):WaitForChild("DoorFake"):SetAttribute("FastOpen", true)
-end 
-end)
-end)
-Tabs.Main:AddToggle("MyToggle",{
-Title = "Fast Dupe",
-Default = false,
-Callback = function(v)
-_G.FastDupe = v
-end})
 Tabs.Main:AddSection("Reach")
 game:GetService("RunService").RenderStepped:Connect(function()
 pcall(function()
@@ -132,8 +121,7 @@ Callback = function(v)
 _G.DoorsReach = v
 end})
 game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
-    if not _G.IncreasedDistance then return end
-    if v.IsA(v,"ProximityPrompt") then
+    if v:IsA("ProximityPrompt") then
        if _G.IncreasedDistance then
            v.MaxActivationDistance *= _G.IncreasedDistance and 2 or 0.5
        end
@@ -145,7 +133,7 @@ Default = false,
 Callback = function(v)
 _G.IncreasedDistance = v
 for _,v in pairs(workspace:GetDescendants()) do
-  if v.IsA(v,"ProximityPrompt") then
+  if v:IsA("ProximityPrompt") then
        if _G.IncreasedDistance then
            v.MaxActivationDistance *= _G.IncreasedDistance and 2 or 0.5
           end
@@ -154,8 +142,7 @@ for _,v in pairs(workspace:GetDescendants()) do
 end})
 Tabs.Main:AddSection("Interact")
 game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
-    if not _G.ThroughInteract then return end
-    if v.IsA(v,"ProximityPrompt") then
+    if v:IsA("ProximityPrompt") then
        if _G.ThroughInteract then
            v.RequiresLineOfSight = _G.ThroughInteract and false or true
        end
@@ -167,8 +154,7 @@ Default = false,
 Callback = function(v)
 _G.ThroughInteract = v
 for _,v in pairs(workspace:GetDescendants()) do
-  if not _G.ThroughInteract then return end
-    if v.IsA(v,"ProximityPrompt") then
+    if v:IsA("ProximityPrompt") then
        if _G.ThroughInteract then
            v.RequiresLineOfSight = _G.ThroughInteract and false or true
           end
@@ -176,8 +162,7 @@ for _,v in pairs(workspace:GetDescendants()) do
     end
 end})
 game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
-    if not _G.InstanceInteract then return end
-    if v.IsA(v,"ProximityPrompt") then
+    if v:IsA("ProximityPrompt") then
        if _G.InstanceInteract then
            v.HoldDuration = 0
        end
@@ -197,26 +182,7 @@ for _,v in pairs(workspace:GetDescendants()) do
        end
     end
 end})
-workspace.CurrentRooms.DescendantAdded:Connect(function(v)
-    if v:IsA("ProximityPrompt") then
-       if not _G.RobloxInteract then return end
-           game:GetService("Players").LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.PromptService.Enabled = _G.RobloxInteract and false or true
-           v.Style = _G.RobloxInteract and "Default" or "Custom"
-    end
-end)
-Tabs.Main:AddToggle("MyToggle",{
-Title = "Classic Interact",
-Default = false,
-Callback = function(v)
-_G.RobloxInteract = v
-for _,v in pairs(workspace:GetDescendants()) do
-  if v:IsA("ProximityPrompt") then
-       if not _G.RobloxInteract then return end
-           game:GetService("Players").LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.PromptService.Enabled = _G.RobloxInteract and false or true
-            v.Style = _G.RobloxInteract and "Default" or "Custom"
-       end
-    end
-end})
+
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Auto Interact",
 Default = false,
