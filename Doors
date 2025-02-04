@@ -1,31 +1,95 @@
---// Service \\
-local plr = game:GetService("Players")
-local lp = plr.LocalPlayer
-local rep = game:GetService("ReplicatedStorage")
-
-
---// Loading \\
-if rep:WaitForChild("GameData"):WaitForChild("Floor").Value == "Fools" then
-remotesFolder = rep.EntityInfo
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GameData = ReplicatedStorage:WaitForChild("GameData")
+local Floor = GameData:WaitForChild("Floor")
+local Fools = Floor.Value == "Fools"
+local Hotel = Floor.Value == "Hotel"
+local Rooms = Floor.Value == "Rooms"
+local Mines = Floor.Value == "Mines"
+local Retro = Floor.Value == "Retro"
+local Backdoor = Floor.Value == "Backdoor"
+if Fools then
+RemotesFolder = game:GetService("ReplicatedStorage").EntityInfo
 else
-remotesFolder = rep.RemotesFolder
+RemotesFolder = game:GetService("ReplicatedStorage").RemotesFolder
 end
+--// Script \\
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 local Window = Fluent:CreateWindow({
-    Title = "YOUHUB | DOORS | " .. lp.Name,
-    SubTitle = "",
+    Title = "YOUHUB | DOORS | ".. game:GetService("Players").LocalPlayer.Name,
+    SubTitle = "Version 'Beta' v0.0.2",
     TabWidth = 160,
     Size = UDim2.fromOffset(500, 400),
     Acrylic = true,
-    Theme = "Dark",
+    Theme = "Aqua",
     MinimizeKey = Enum.KeyCode.LeftControl
 })
-
---Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
+Fluent:Notify({
+        Title = "Keybind Toggle",
+        Content = "Enum.KeyCode.LeftControl",
+        SubContent = "Press keybind 'LeftControl' to Toggle UI",
+        Duration = 5
+    })
 local Tabs = {
     Main = Window:AddTab({ Title = "Main", Icon = "home" }),
-
+    Players = Window:AddTab({ Title = "Players", Icon = "user" }),
+    Entities = Window:AddTab({ Title = "Entities", Icon = "shield" }),
+    Visual = Window:AddTab({ Title = "Visual", Icon = "eye" }),
+    ESP = Window:AddTab({ Title = "ESP", Icon = "book" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
+Tabs.Main:AddSection("Death")
+if Fools then
+Tabs.Main:AddDropdown("MyDropdown",{
+        Title = "Select On Death",
+        Values = {"Revive [FREE]", "Leave", "Lobby"},
+        Multi = false,
+        Default = 1,
+        Callback = function(v)
+_G.SelectOnDeath = v
+game:GetService("RunService").RenderStepped:Connect(function()
+if _G.EnabledOnDeath then
+if game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Lobby" then
+RemotesFolder.Lobby:FireServer()
+elseif game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Leave" then
+game:Shutdown()
+elseif game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Revive [FREE]" then
+RemotesFolder.Revive:FireServer()
+end
+end
+end)
+end})
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Enabled On Death",
+Default = false,
+Callback = function(v)
+_G.EnabledOnDeath = v
+end})
+else
+Tabs.Main:AddDropdown("MyDropdown",{
+        Title = "Select On Death",
+        Values = {"Revive [NOT FREE]", "Leave", "Lobby"},
+        Multi = false,
+        Default = 1,
+        Callback = function(v)
+_G.SelectOnDeath = v
+game:GetService("RunService").RenderStepped:Connect(function()
+if _G.EnabledOnDeath then
+if game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Lobby" then
+RemotesFolder.Lobby:FireServer()
+elseif game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Leave" then
+game:Shutdown()
+elseif game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Revive [NOR FREE]" then
+RemotesFolder.Revive:FireServer()
+end
+end
+end)
+end})
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Enabled On Death",
+Default = false,
+Callback = function(v)
+_G.EnabledOnDeath = v
+end})
+end
