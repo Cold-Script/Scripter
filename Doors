@@ -187,14 +187,7 @@ for _,v in pairs(workspace:GetDescendants()) do
        end
     end
 end})
-if Fools then
-Tabs.Main:AddToggle("MyToggle",{
-Title = "Ignores Gold Interact",
-Default = false,
-Callback = function(v)
-_G.IgnoreGold = v
-end})
-end
+
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Auto Interact",
 Default = false,
