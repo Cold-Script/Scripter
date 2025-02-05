@@ -179,7 +179,7 @@ if v then
 local function setup(room)
 local function check(v)
 if v:IsA("Model") then
-if (v.Name == "Candy" or v.Name == "StarJug" or v.Name == "StarBottle" or v.Name == "StarVial" or v.Name == "GweenSoda" or v.Name == "Bread" or v.Name == "Cheese" or v.Name == "BandagePack" or v.Name == "BatteryPack" or v.Name == "LaserPointer" or v.Name == "Glowstick" or v.Name == "Smoothie" or v.Name == "Straplight" or v.Name == "Bulklight" or v.Name == "KeyObtain" or v.Name == "LiveHintBook") then
+if (v.Name == "Candy" or v.Name == "StarJug" or v.Name == "StarBottle" or v.Name == "StarVial" or v.Name == "GweenSoda" or v.Name == "Bread" or v.Name == "Cheese" or v.Name == "BandagePack" or v.Name == "BatteryPack" or v.Name == "LaserPointer" or v.Name == "Glowstick" or v.Name == "Smoothie" or v.Name == "Straplight" or v.Name == "Bulklight" or v.Name == "KeyObtain" or v.Name == "LiveHintBook" or v.Name == "Lighter" or v.Name == "Lockpick" or v.Name == "Vitamins" or v.Name == "Crucifix" or v.Name == "CrucifixWall" or v.Name == "SkeletonKey" or v.Name == "Flashlight" or v.Name == "Candle") then
 local prompt = v:WaitForChild("ModulePrompt")
 local interactions = prompt:GetAttribute("Interactions")
 if not interactions then
