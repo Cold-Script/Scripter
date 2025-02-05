@@ -120,72 +120,54 @@ Default = false,
 Callback = function(v)
 _G.DoorsReach = v
 end})
-game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
-if not _G.IncreasedDistance return end
+workspace.CurrentRooms.ChildAdded:Connect(function(v)
 if v:IsA("ProximityPrompt") then
-       if _G.IncreasedDistance then
-           v.MaxActivationDistance *= _G.IncreasedDistance and 2 or 0.5
-       end
-    end
-end)
+v.MaxActivationDistance = _G.IncreasedDistance and 10 or 8
+end
+end
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Reach",
 Default = false,
 Callback = function(v)
 _G.IncreasedDistance = v
 for _,v in pairs(workspace:GetDescendants()) do
-if not _G.IncreasedDistance return end
-  if v:IsA("ProximityPrompt") then
-       if _G.IncreasedDistance then
-           v.MaxActivationDistance *= _G.IncreasedDistance and 2 or 0.5
-          end
-       end
-    end
+if v:IsA("ProximityPrompt") then
+v.MaxActivationDistance = _G.IncreasedDistance and 10 or 8
+end
+end
 end})
 Tabs.Main:AddSection("Interact")
-game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
-if not _G.ThroughInteract return end
+workspace.CurrentRooms.ChildAdded:Connect(function(v)
 if v:IsA("ProximityPrompt") then
-       if _G.ThroughInteract then
-           v.RequiresLineOfSight = _G.ThroughInteract and false or true
-       end
-    end
-end)
+v.RequiresLineOfSight = not _G.ThroughInteract
+end
+end
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Through Interact",
 Default = false,
 Callback = function(v)
 _G.ThroughInteract = v
 for _,v in pairs(workspace:GetDescendants()) do
-if not _G.ThroughInteract return end
-    if v:IsA("ProximityPrompt") then
-       if _G.ThroughInteract then
-           v.RequiresLineOfSight = _G.ThroughInteract and false or true
-          end
-       end
-    end
+if v:IsA("ProximityPrompt") then
+v.RequiresLineOfSight = not _G.ThroughInteract
+end
+end
 end})
-game:GetService("Workspace").CurrentRooms.DescendantAdded:Connect(function(v)
-if not _G.InstanceInteract return end
-    if v:IsA("ProximityPrompt") then
-       if _G.InstanceInteract then
-           v.HoldDuration = 0
-       end
-    end
-end)
+workspace.CurrentRooms.ChildAdded:Connect(function(v)
+if v:IsA("ProximityPrompt") and _G.InstanceInteract then
+v.HoldDuration = 0
+end
+end
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Instance Interact",
 Default = false,
 Callback = function(v)
 _G.InstanceInteract = v
 for _,v in pairs(workspace:GetDescendants()) do
-  if not _G.InstanceInteract then return end
-    if v.IsA(v,"ProximityPrompt") then
-       if _G.InstanceInteract then
-           v.HoldDuration = 0
-          end
-       end
-    end
+if v:IsA("ProximityPrompt") and _G.InstanceInteract then
+v.HoldDuration = 0
+end
+end
 end})
 
 Tabs.Main:AddToggle("MyToggle",{
@@ -197,7 +179,19 @@ if v then
 local function setup(room)
 local function check(v)
 if v:IsA("Model") then
-if v.Name == "DrawerContainer" then
+if (v.Name == "Candy" or v.Name == "StarJug" or v.Name == "StarBottle" or v.Name == "StarVial" or v.Name == "GweenSoda" or v.Name == "Bread" or v.Name == "Cheese" or v.Name == "BandagePack" or v.Name == "BatteryPack" or v.Name == "LaserPointer" or v.Name == "Glowstick" or v.Name == "Smoothie" or v.Name == "Straplight" or v.Name == "Bulklight" or v.Name == "KeyObtain" or v.Name == "LiveHintBook") then
+local prompt = v:WaitForChild("ModulePrompt")
+local interactions = prompt:GetAttribute("Interactions")
+if not interactions then
+task.spawn(function()
+repeat task.wait(0.2)
+if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 12 then
+fireproximityprompt(prompt) 
+end
+until prompt:GetAttribute("Interactions") or not _G.AutoLoot
+end)
+end
+elseif v.Name == "DrawerContainer" then
 local knob = v:WaitForChild("Knobs")
 if knob then
 local prompt = knob:WaitForChild("ActivateEventPrompt")
@@ -226,18 +220,6 @@ end)
 end
 elseif v.Name == "Door" then
 local prompt = v:WaitForChild("Lock"):WaitForChild("UnlockPrompt")
-local interactions = prompt:GetAttribute("Interactions")
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.2)
-if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 12 then
-fireproximityprompt(prompt) 
-end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
-end
-elseif v.Name == "Candy" then
-local prompt = v:WaitForChild("ModulePrompt")
 local interactions = prompt:GetAttribute("Interactions")
 if not interactions then
 task.spawn(function()
