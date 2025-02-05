@@ -122,9 +122,9 @@ _G.DoorsReach = v
 end})
 workspace.CurrentRooms.ChildAdded:Connect(function(v)
 if v:IsA("ProximityPrompt") then
-v.MaxActivationDistance = _G.IncreasedDistance and 10 or 8
+v.MaxActivationDistance = _G.IncreasedDistance and 15 or 8
 end
-end
+end)
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Reach",
 Default = false,
@@ -132,7 +132,7 @@ Callback = function(v)
 _G.IncreasedDistance = v
 for _,v in pairs(workspace:GetDescendants()) do
 if v:IsA("ProximityPrompt") then
-v.MaxActivationDistance = _G.IncreasedDistance and 10 or 8
+v.MaxActivationDistance = _G.IncreasedDistance and 15 or 8
 end
 end
 end})
@@ -141,7 +141,7 @@ workspace.CurrentRooms.ChildAdded:Connect(function(v)
 if v:IsA("ProximityPrompt") then
 v.RequiresLineOfSight = not _G.ThroughInteract
 end
-end
+end)
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Through Interact",
 Default = false,
@@ -157,7 +157,7 @@ workspace.CurrentRooms.ChildAdded:Connect(function(v)
 if v:IsA("ProximityPrompt") and _G.InstanceInteract then
 v.HoldDuration = 0
 end
-end
+end)
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Instance Interact",
 Default = false,
@@ -169,140 +169,97 @@ v.HoldDuration = 0
 end
 end
 end})
-
+Tabs.Main:AddSection("Automation")
 Tabs.Main:AddToggle("MyToggle",{
-Title = "Auto Interact",
+Title = "Auto Breaker",
 Default = false,
 Callback = function(v)
-_G.AutoLoot = v
-if v then
-local function setup(room)
-local function check(v)
-if v:IsA("Model") then
-if (v.Name == "HolyGrenade" or v.Name == "Shakelight" or v.Name == "ShieldMini" or v.Name == "ShieldBig" or v.Name == "Scanner" or v.Name == "ElectricalKeyObtain" or v.Name == "PickupItem" or v.Name == "Battery" or v.Name == "Shears" or v.Name == "LiveBreakerPolePickup" or v.Name == "Candy" or v.Name == "StarJug" or v.Name == "StarBottle" or v.Name == "StarVial" or v.Name == "GweenSoda" or v.Name == "Bread" or v.Name == "Cheese" or v.Name == "BandagePack" or v.Name == "BatteryPack" or v.Name == "LaserPointer" or v.Name == "Glowstick" or v.Name == "Smoothie" or v.Name == "Straplight" or v.Name == "Bulklight" or v.Name == "KeyObtain" or v.Name == "LiveHintBook" or v.Name == "Lighter" or v.Name == "Lockpick" or v.Name == "Vitamins" or v.Name == "Crucifix" or v.Name == "CrucifixWall" or v.Name == "SkeletonKey" or v.Name == "Flashlight" or v.Name == "Candle" or v.Name == "Bandage") then
-local prompt = v:WaitForChild("ModulePrompt")
-local interactions = prompt:GetAttribute("Interactions")
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.1)
-if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 20 then
-fireproximityprompt(prompt) 
-end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
-end
-elseif v.Name == "DrawerContainer" then
-local knob = v:WaitForChild("Knobs")
-if knob then
-local prompt = knob:WaitForChild("ActivateEventPrompt")
-local interactions = prompt:GetAttribute("Interactions")
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.2)
-if game.Players.LocalPlayer:DistanceFromCharacter(knob.Position) <= 12 then
-fireproximityprompt(prompt)
-end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
+_G.AutoBreaker = v
+while _G.AutoBreaker do wait(1)
+if _G.AutoBreaker then
+RemotesFolder.EBF:FireServer()
 end
 end
-elseif v.Name == "GoldPile" then
-local prompt = v:WaitForChild("LootPrompt")
-local interactions = prompt:GetAttribute("Interactions")
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.2)
-if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 12 and not _G.IgnoreGold then
-fireproximityprompt(prompt) 
+end})
+Tabs.Main:AddButton({
+Title = "Auto Padlock Unlock",
+Callback = function()
+local Floor = game:GetService("ReplicatedStorage").GameData.Floor
+local Paper = workspace:FindFirstChild("LibraryHintPaper",true) or workspace:FindFirstChild("LibraryHintPaperHard",true) or Players:FindFirstChild("LibraryHintPaper",true) or Players:FindFirstChild("LibraryHintPaperHard",true)
+if not Paper then
+Window:Dialog({
+                Title = "YOUHUB | DOORS ",
+                Content = "You need Paper"
+                Buttons = {
+                    {
+                        Title = "Confirm",
+                        Callback = function()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                        end
+                    }
+                }
+            })
+return
 end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
-end
-elseif v.Name == "FuseObtain" then
-local prompt = v:WaitForChild("Fuse"):WaitForChild("ModulePrompt")
-local interactions = prompt:GetAttribute("Interactions")
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.2)
-if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 12 then
-fireproximityprompt(prompt) 
-end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
-end
-elseif v.Name == "MinesGateButton" then
-local prompt = v:WaitForChild("Button"):WaitForChild("ModulePrompt")
-local interactions = prompt:GetAttribute("Interactions")
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.2)
-if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 12 then
-fireproximityprompt(prompt) 
-end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
-end
-elseif v.Name == "Locker_Small" then
-local prompt = v:WaitForChild("Door"):WaitForChild("ActivateEventPrompt")
-local interactions = prompt:GetAttribute("Interactions")
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.2)
-if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 12 then
-fireproximityprompt(prompt) 
-end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
-end
-elseif v.Name:sub(1,8) == "ChestBox" then
-local prompt = v:WaitForChild("ActivateEventPrompt")
-local interactions = prompt:GetAttribute("Interactions")
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.2)
-if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 12 then
-fireproximityprompt(prompt)
-end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
-end
-elseif v.Name == "RolltopContainer" then
-local prompt = v:WaitForChild("ActivateEventPrompt")
-local interactions = prompt:GetAttribute("Interactions")                       
-if not interactions then
-task.spawn(function()
-repeat task.wait(0.1)
-if game.Players.LocalPlayer:DistanceFromCharacter(v.PrimaryPart.Position) <= 12 then
-fireproximityprompt(prompt)
-end
-until prompt:GetAttribute("Interactions") or not _G.AutoLoot
-end)
-end
-end 
+local HintsNeeded = Floor.Value == "Fools" and 8 or 3
+local Hints = 0
+for _,Collected in pairs(game.Players.LocalPlayer.PlayerGui.PermUI.Hints:GetChildren()) do
+if Collected.Name == "Icon" then
+if Collected:IsA("ImageLabel") then
+for _,Icon in pairs(Paper.UI:GetChildren()) do
+if tonumber(Icon.Name) then
+if Icon.ImageRectOffset == Collected.ImageRectOffset then
+Hints += 1
 end
 end
-local subaddcon
-subaddcon = room.DescendantAdded:Connect(function(v)
-check(v) 
-end)            
-for i,v in pairs(room:GetDescendants()) do
-check(v)
-end            
-task.spawn(function()
-repeat task.wait() until not _G.AutoLoot
-subaddcon:Disconnect() 
-end)
-end        
-local addconnect
-addconnect = workspace.CurrentRooms.ChildAdded:Connect(function(room)
-setup(room)
-end)        
-for i,room in pairs(workspace.CurrentRooms:GetChildren()) do
-if room:FindFirstChild("Assets") then
-setup(room) 
 end
-end        
-repeat task.wait() until not _G.AutoLoot
-addconnect:Disconnect()
+end
+end
+end
+if Hints < HintsNeeded then
+print("Need Books")
+return
+end
+local t = {}
+for i = 1, Floor.Value == "Hotel" and 5 or 10 do
+local Icon = Paper.UI[i]
+local Number = -1
+for _,Collected in pairs(game.Players.LocalPlayer.PlayerGui.PermUI.Hints:GetChildren()) do
+if Collected.Name == "Icon" then
+if Collected.ImageRectOffset == Icon.ImageRectOffset then
+Number = tonumber(Collected.TextLabel.Text)
+end
+end
+end
+table.insert(t,Number)
+end
+for one=0,t[1]==-1 and 9 or 0 do
+for two=0,t[2]==-1 and 9 or 0 do
+for three=0,t[3]==-1 and 9 or 0 do
+for four=0,t[4]==-1 and 9 or 0 do
+for five=0,t[5]==-1 and 9 or 0 do
+if Floor.Value == "Fools" then
+for six=0,t[6]==-1 and 9 or 0 do
+for seven=0,t[7]==-1 and 9 or 0 do
+for eight=0,t[8]==-1 and 9 or 0 do
+for nine=0,t[9]==-1 and 9 or 0 do
+for ten=0,t[10]==-1 and 9 or 0 do
+RemotesFolder.PL:FireServer((t[1]==-1 and one or t[1])..(t[2]==-1 and two or t[2])..(t[3]==-1 and three or t[3])..(t[4]==-1 and four or t[4])..(t[5]==-1 and five or t[5])..(t[6]==-1 and six or t[6])..(t[7]==-1 and seven or t[7])..(t[8]==-1 and eight or t[8])..(t[9]==-1 and nine or t[9])..(t[10]==-1 and ten or t[10]))
+end
+end
+end
+end
+end
+else
+RemotesFolder.PL:FireServer((t[1]==-1 and one or t[1])..(t[2]==-1 and two or t[2])..(t[3]==-1 and three or t[3])..(t[4]==-1 and four or t[4])..(t[5]==-1 and five or t[5]))
+end
+end
+end
+end
+end
 end
 end})
