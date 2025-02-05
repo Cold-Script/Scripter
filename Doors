@@ -120,58 +120,83 @@ Default = false,
 Callback = function(v)
 _G.DoorsReach = v
 end})
-workspace.CurrentRooms.ChildAdded:Connect(function(v)
-if v:IsA("ProximityPrompt") then
-v.MaxActivationDistance = _G.IncreasedDistance and 15 or 8
-end
-end)
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Reach",
 Default = false,
 Callback = function(v)
-_G.IncreasedDistance = v
+if v then
 for _,v in pairs(workspace:GetDescendants()) do
 if v:IsA("ProximityPrompt") then
-v.MaxActivationDistance = _G.IncreasedDistance and 15 or 8
+v.MaxActivationDistance = 15
+end
+end
+IncreasedDistance = workspace.CurrentRooms.ChildAdded:Connect(function(v)
+for _,v in pairs(workspace:GetDescendants()) do
+if v:IsA("ProximityPrompt") then
+v.MaxActivationDistance = 15
+end
+end
+end)
+else
+IncreasedDistance:Disconnect()
+for _,v in pairs(workspace:GetDescendants()) do
+if v:IsA("ProximityPrompt") then
+v.MaxActivationDistance = 8
+end
 end
 end
 end})
 Tabs.Main:AddSection("Interact")
-workspace.CurrentRooms.ChildAdded:Connect(function(v)
-if v:IsA("ProximityPrompt") then
-v.RequiresLineOfSight = not _G.ThroughInteract
-end
-end)
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Through Interact",
 Default = false,
 Callback = function(v)
-_G.ThroughInteract = v
+if v then
 for _,v in pairs(workspace:GetDescendants()) do
 if v:IsA("ProximityPrompt") then
-v.RequiresLineOfSight = not _G.ThroughInteract
+v.RequiresLineOfSight = false
+end
+end
+ThroughInteract = workspace.CurrentRooms.ChildAdded:Connect(function(v)
+for _,v in pairs(workspace:GetDescendants()) do
+if v:IsA("ProximityPrompt") then
+v.RequiresLineOfSight = false
+end
+end
+end)
+else
+ThroughInteract:Disconnect()
+for _,v in pairs(workspace:GetDescendants()) do
+if v:IsA("ProximityPrompt") then
+v.RequiresLineOfSight = true
+end
 end
 end
 end})
-workspace.CurrentRooms.ChildAdded:Connect(function(v)
-if v:IsA("ProximityPrompt") and _G.InstanceInteract then
-v.HoldDuration = 0
-end
-end)
 Tabs.Main:AddToggle("MyToggle",{
 Title = "Instance Interact",
 Default = false,
 Callback = function(v)
-_G.InstanceInteract = v
+if v then
 for _,v in pairs(workspace:GetDescendants()) do
-if v:IsA("ProximityPrompt") and _G.InstanceInteract then
+if v:IsA("ProximityPrompt") then
 v.HoldDuration = 0
 end
+end
+InstanceInteract = workspace.CurrentRooms.ChildAdded:Connect(function(v)
+for _,v in pairs(workspace:GetDescendants()) do
+if v:IsA("ProximityPrompt") then
+v.HoldDuration = 0
+end
+end
+end)
+else
+InstanceInteract:Disconnect()
 end
 end})
 Tabs.Main:AddSection("Automation")
 Tabs.Main:AddToggle("MyToggle",{
-Title = "Auto Breaker",
+Title = "Auto Breaker [100]",
 Default = false,
 Callback = function(v)
 _G.AutoBreaker = v
@@ -182,14 +207,14 @@ end
 end
 end})
 Tabs.Main:AddButton({
-Title = "Auto Padlock Unlock",
+Title = "Auto Padlock Unlock [50]",
 Callback = function()
-local Floor = game:GetService("ReplicatedStorage").GameData.Floor
+local Players = game:GetService('Players')
 local Paper = workspace:FindFirstChild("LibraryHintPaper",true) or workspace:FindFirstChild("LibraryHintPaperHard",true) or Players:FindFirstChild("LibraryHintPaper",true) or Players:FindFirstChild("LibraryHintPaperHard",true)
 if not Paper then
 Window:Dialog({
                 Title = "YOUHUB | DOORS ",
-                Content = "You need Paper"
+                Content = "You need Paper",
                 Buttons = {
                     {
                         Title = "Confirm",
@@ -205,7 +230,7 @@ Window:Dialog({
             })
 return
 end
-local HintsNeeded = Floor.Value == "Fools" and 8 or 3
+local HintsNeeded = Fools and 8 or 3
 local Hints = 0
 for _,Collected in pairs(game.Players.LocalPlayer.PlayerGui.PermUI.Hints:GetChildren()) do
 if Collected.Name == "Icon" then
@@ -225,7 +250,7 @@ print("Need Books")
 return
 end
 local t = {}
-for i = 1, Floor.Value == "Hotel" and 5 or 10 do
+for i = 1, Hotel and 5 or 10 do
 local Icon = Paper.UI[i]
 local Number = -1
 for _,Collected in pairs(game.Players.LocalPlayer.PlayerGui.PermUI.Hints:GetChildren()) do
