@@ -41,10 +41,9 @@ local Tabs = {
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 Tabs.Main:AddSection("Death")
-if Fools then
 Tabs.Main:AddDropdown("MyDropdown",{
         Title = "Select On Death",
-        Values = {"Revive [FREE]", "Leave", "Lobby"},
+        Values = {"Revive", "Leave", "Lobby"},
         Multi = false,
         Default = 1,
         Callback = function(v)
@@ -67,33 +66,7 @@ Default = false,
 Callback = function(v)
 _G.EnabledOnDeath = v
 end})
-else
-Tabs.Main:AddDropdown("MyDropdown",{
-        Title = "Select On Death",
-        Values = {"Revive [NOT FREE]", "Leave", "Lobby"},
-        Multi = false,
-        Default = 1,
-        Callback = function(v)
-_G.SelectOnDeath = v
-game:GetService("RunService").RenderStepped:Connect(function()
-if _G.EnabledOnDeath then
-if game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Lobby" then
-RemotesFolder.Lobby:FireServer()
-elseif game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Leave" then
-game:Shutdown()
-elseif game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 and _G.SelectOnDeath == "Revive [NOR FREE]" then
-RemotesFolder.Revive:FireServer()
-end
-end
-end)
-end})
-Tabs.Main:AddToggle("MyToggle",{
-Title = "Enabled On Death",
-Default = false,
-Callback = function(v)
-_G.EnabledOnDeath = v
-end})
-end
+
 Tabs.Main:AddSection("Fast")
 game:GetService("RunService").RenderStepped:Connect(function()
 pcall(function()
@@ -130,7 +103,7 @@ if v:IsA("ProximityPrompt") then
 v.MaxActivationDistance = 15
 end
 end
-IncreasedDistance = workspace.CurrentRooms.ChildAdded:Connect(function(v)
+IncreasedDistance = workspace.CurrentRooms.ChildAdded:Connect(function()
 for _,v in pairs(workspace:GetDescendants()) do
 if v:IsA("ProximityPrompt") then
 v.MaxActivationDistance = 15
@@ -157,7 +130,7 @@ if v:IsA("ProximityPrompt") then
 v.RequiresLineOfSight = false
 end
 end
-ThroughInteract = workspace.CurrentRooms.ChildAdded:Connect(function(v)
+ThroughInteract = workspace.CurrentRooms.ChildAdded:Connect(function()
 for _,v in pairs(workspace:GetDescendants()) do
 if v:IsA("ProximityPrompt") then
 v.RequiresLineOfSight = false
@@ -183,7 +156,7 @@ if v:IsA("ProximityPrompt") then
 v.HoldDuration = 0
 end
 end
-InstanceInteract = workspace.CurrentRooms.ChildAdded:Connect(function(v)
+InstanceInteract = workspace.CurrentRooms.ChildAdded:Connect(function()
 for _,v in pairs(workspace:GetDescendants()) do
 if v:IsA("ProximityPrompt") then
 v.HoldDuration = 0
@@ -213,21 +186,21 @@ local Players = game:GetService('Players')
 local Paper = workspace:FindFirstChild("LibraryHintPaper",true) or workspace:FindFirstChild("LibraryHintPaperHard",true) or Players:FindFirstChild("LibraryHintPaper",true) or Players:FindFirstChild("LibraryHintPaperHard",true)
 if not Paper then
 Window:Dialog({
-                Title = "YOUHUB | DOORS ",
-                Content = "You need Paper",
-                Buttons = {
-                    {
-                        Title = "Confirm",
-                        Callback = function()
-                        end
-                    },
-                    {
-                        Title = "Cancel",
-                        Callback = function()
-                        end
-                    }
-                }
-            })
+Title = "YOUHUB | DOORS ",
+Content = "You need hold Paper,
+Buttons = {
+{
+Title = "Confirm",
+Callback = function()
+end
+},
+{
+Title = "Cancel",
+Callback = function()
+end
+}
+}
+})
 return
 end
 local HintsNeeded = Fools and 8 or 3
@@ -288,3 +261,129 @@ end
 end
 end
 end})
+Tabs.Main:AddSection("Misc")
+Tabs.Main:AddButton({
+Title = "Play Again",
+Callback = function()
+Window:Dialog({
+Title = "YOUHUB | DOORS ",
+Content = "You want Play Again?",
+Buttons = {
+{
+Title = "Confirm",
+Callback = function()
+RemotesFolder.PlayAgain:FireServer()
+end
+},
+{
+Title = "Cancel",
+Callback = function()
+end
+}
+}
+})
+end})
+Tabs.Main:AddButton({
+Title = "Revive",
+Callback = function()
+Window:Dialog({
+Title = "YOUHUB | DOORS ",
+Content = "You want Revive?",
+Buttons = {
+{
+Title = "Confirm",
+Callback = function()
+RemotesFolder.Revive:FireServer()
+end
+},
+{
+Title = "Cancel",
+Callback = function()
+end
+}
+}
+})
+end})
+Tabs.Main:AddButton({
+Title = "Lobby",
+Callback = function()
+Window:Dialog({
+Title = "YOUHUB | DOORS ",
+Content = "You want return to Lobby?",
+Buttons = {
+{
+Title = "Confirm",
+Callback = function()
+RemotesFolder.Lobby:FireServer()
+end
+},
+{
+Title = "Cancel",
+Callback = function()
+end
+}
+}
+})
+end})
+Tabs.Main:AddButton({
+Title = "Instance Leave",
+Callback = function()
+Window:Dialog({
+Title = "YOUHUB | DOORS ",
+Content = "You want Leave?",
+Buttons = {
+{
+Title = "Confirm",
+Callback = function()
+game:Shutdown()
+end
+},
+{
+Title = "Cancel",
+Callback = function()
+end
+}
+}
+})
+end})
+Tabs.Main:AddSection("World")
+game.Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("MoveDirection"):Connect(function()
+if _G.ClosetsExitFix and game.Players.LocalPlayer.Character:GetAttribute("Hiding")==true then 
+RemotesFolder.CamLock:FireServer()
+end 
+end)
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Closets Exit Fix",
+Default = false,
+Callback = function(v)
+_G.ClosetsExitFix = v
+end})
+if Retro then
+Tabs.Main:AddToggle("MyToggle",{
+Title = "Hide Fake Bridge",
+Default = false,
+Callback = function(v)
+_G.BlurFakeBridge = v
+if _G.BlurFakeBridge then
+for _,v in pairs(workspace:GetDescendants()) do
+if v.Name == "Bridge" and not v.CanCollide == true then
+v.Transparency = 0.9
+end
+end
+BlurFakeBridge = workspace.CurrentRooms.ChildAdded:Connect(function(v)
+for _,v in pairs(workspace:GetDescendants()) do
+if v.Name == "Bridge" and not v.CanCollide == true then
+v.Transparency = 0.75
+end
+end
+end)
+else
+BlurFakeBridge:Disconnect()
+for _,v in pairs(workspace:GetDescendants()) do
+if v.Name == "Bridge" and not v.CanCollide == true then
+v.Transparency = 0
+end
+end
+end
+end})
+end
